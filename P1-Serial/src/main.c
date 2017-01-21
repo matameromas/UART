@@ -1,5 +1,5 @@
 /*
-Author: Luis Israel Rivera Rodriguez
+Author: Luis Israel Rivera Rodriguez , Daniela Becerra, Sergio Flores
 Date:   Jan, 2017
 Description: Serial a patin 
 */
