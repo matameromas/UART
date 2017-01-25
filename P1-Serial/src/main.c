@@ -35,9 +35,9 @@ void UART_init(void)
 	DDRD=0x20;		//configure pin 6 as output
 }
 
-ISR(TIMER1_COMPA_vect){						//This is our timer interrupt service routine
+ISR(TIMER1_COMPB_vect){						//This is our timer interrupt service routine
 	// the output compare flag is automatically cleared when the interrupt is executed
-	OCR1A+=TB;
+	OCR1B+=TB;
 	cont--;
 	if((cont<=DATA_LENGTH) && (cont!=STOP_BIT))
 	{
@@ -57,12 +57,12 @@ ISR(TIMER1_COMPA_vect){						//This is our timer interrupt service routine
 
 void UART_send(unsigned char data)
 {
-	cont=DATA_LENGTH;								//8 bits plus start and stop bit
-	OCR1A=TCNT1+TB;									//time for next send
-	PORTD=0x00;										//set low pin 6 of PORT D (START BIT)
+	OCR1B=TCNT1+TB;									//8 bits plus start and stop bit							//time for next send
+	PORTD=0x00;	
+	cont=DATA_LENGTH;									//set low pin 6 of PORT D (START BIT)
 	THR=data;										//put the data in the global variable THR
-	wdt_reset();									//reset watchdog
-	TIMSK1 = (1<<OCIE1A);							//Enable timer interrupts	
+	//wdt_reset();									//reset watchdog
+	TIMSK1 = (1<<OCIE1B);							//Enable timer interrupts	
 }
 
 void TIMER_init(void)
@@ -75,16 +75,14 @@ int main(void)
 	UART_init();
 	TIMER_init();
 	sei();										//Enable global interrupts
-	
+
+	UART_send(0x4A);
+	UART_send(0x4A);
 	for(;;)
 	{
 	    //Read timer value and act according with it
-		UART_send(0x45);
-		UART_send(0x72);
-		UART_send(0x4C);
-		UART_send(0x6f);
-		UART_send(0x0A);
-		UART_send(0x0D);
+		wdt_reset();
+		//UART_send(0x45);
     }
 	return 0;
 }
